@@ -81,6 +81,9 @@ class XPathStep(object):
     def has_class(self, klass):
         return self._filter('[has_word(@class, "%s")]' % klass)
 
+    def text_equals(self, text):
+        return self._filter('[text()="%s"]' % text)
+
 class Ekskweri(XPathStep):
     def __init__(self, document, xpath=''):
         super(Ekskweri, self).__init__(xpath)
