@@ -24,6 +24,11 @@ def make_filters(attrs):
               for attname, fn, value in complex_attrs(attrs)]
     return ''.join(simple + complx)
 
+def get_xpath(step):
+    if isinstance(step, basestring):
+        return step
+    return step.xpath
+
 def has_word(evaluator, s, word):
     return s and word in s[0].split()
 
@@ -40,23 +45,23 @@ class XPathStep(object):
 
     def descendant(self, other):
         "XPath //"
-        return self._filter('//%s' % other.xpath)
+        return self._filter('//%s' % get_xpath(other))
 
     def child(self, other):
         "XPath /"
-        return self._filter('/%s' % other.xpath)
+        return self._filter('/%s' % get_xpath(other))
 
     def has_child(self, other):
         "XPath [expr]"
-        return self._filter('[%s]' % other.xpath)
+        return self._filter('[%s]' % get_xpath(other))
 
     def next(self, other):
         "jQuery +, XPath first following-sibling"
-        return self._filter('/following-sibling::%s[1]' % other.xpath)
+        return self._filter('/following-sibling::%s[1]' % get_xpath(other))
 
     def following(self, other):
         "jQuery ~, XPath following-sibling"
-        return self._filter('/following-sibling::%s' % other.xpath)
+        return self._filter('/following-sibling::%s' % get_xpath(other))
 
     def eq(self, index):
         "jQuery :eq(index), XPath [index]"
@@ -68,7 +73,7 @@ class XPathStep(object):
 
     def union(self, other):
         "jQuery ',', XPath |"
-        return self._filter('|%s)' % other.xpath, prefix='(')
+        return self._filter('|%s)' % get_xpath(other), prefix='(')
 
     def attr(self, attrs):
         return self._filter(make_filters(attrs))
