@@ -54,12 +54,12 @@ from elkweri import Elkweri
 
 class HtmlTests(TestCase):
     html = Elkweri(u'<html><body><div id="main">'
-                      u'<p class="para" id="para1">This</p>'
-                      u'<p class="para" id="para2">is '
-                      u'<span class="inner"><a href="link">a</a></span></p>'
-                      u'<p class="lastpara" id="para3">test'
-                      u'<span class="inner">kin</span></p>'
-                      u'</div></body></html>')
+                   u'<p class="para" id="para1">This</p>'
+                   u'<p class="para" id="para2">is '
+                   u'<span class="inner"><a href="link">a</a></span></p>'
+                   u'<p class="lastpara" id="para3">test'
+                   u'<span class="inner">kin</span></p>'
+                   u'</div></body></html>')
 
     def test_many_descendants_xpath(self):
         eq_((self.html // p).xpath, '//p')
