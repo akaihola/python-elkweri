@@ -162,6 +162,18 @@ class HtmlTests(TestCase):
         """Union can't be used except at the beginning of an expression"""
         assert_raises(SyntaxError, lambda: self.html // x // (span.union(a)))
 
+    def test_union_operator_xpath(self):
+        eq_(((self.html // p < (span / a)) | (self.html // p)).xpath,
+            '(//p[span/a]|//p)')
+
+    def test_id_of_union_operator_xpath(self):
+        eq_(((self.html // p < (span / a)) | (self.html // p))['id'].xpath,
+            '(//p[span/a]|//p)/@id')
+
+    def test_union_operator_fails_if_non_root(self):
+        """Union can't be used except at the beginning of an expression"""
+        assert_raises(SyntaxError, lambda: self.html // x // (span | a))
+
 class FormTests(TestCase):
     form1 = Elkweri(
         u'<form method="post" action=".">'

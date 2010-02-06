@@ -9,6 +9,7 @@ class Step(XPathStep):
     __lt__ = XPathStep.has_child
     __add__ = XPathStep.next
     __xor__ = XPathStep.following
+    __or__ = XPathStep.union
 
     def __getitem__(self, index):
         "XPath [integer] and /@attribute"
