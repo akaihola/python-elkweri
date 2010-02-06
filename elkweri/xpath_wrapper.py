@@ -24,11 +24,6 @@ def make_filters(attrs):
               for attname, fn, value in complex_attrs(attrs)]
     return ''.join(simple + complx)
 
-def get_xpath(step):
-    if isinstance(step, basestring):
-        return step
-    return step.xpath
-
 def has_word(evaluator, s, word):
     return s and word in s[0].split()
 
@@ -37,31 +32,43 @@ extensions = [{(None, 'has_word'): has_word}]
 class XPathStep(object):
     "The Step class represents one step in an XPath expression"
 
-    def __init__(self, xpath):
+    def __init__(self, xpath, is_union=False):
         self.xpath = xpath
+        self.is_union = is_union
 
-    def _filter(self, tail, prefix=''):
-        return self.__class__('%s%s%s' % (prefix, self.xpath, tail))
+    def _filter(self, tail, other=None, prefix='', is_union=False):
+        if isinstance(other, XPathStep) and other.is_union:
+            raise SyntaxError("Can't embed union XPath expressions")
+        if other is None:
+            real_tail = tail
+        elif isinstance(other, basestring):
+            real_tail = tail % other
+        else:
+            real_tail = tail % other.xpath
+        return self._clone('%s%s%s' % (prefix, self.xpath, real_tail), is_union)
+
+    def _clone(self, xpath, is_union):
+        return self.__class__(xpath, is_union)
 
     def descendant(self, other):
         "XPath //"
-        return self._filter('//%s' % get_xpath(other))
+        return self._filter('//%s', other)
 
     def child(self, other):
         "XPath /"
-        return self._filter('/%s' % get_xpath(other))
+        return self._filter('/%s', other)
 
     def has_child(self, other):
         "XPath [expr]"
-        return self._filter('[%s]' % get_xpath(other))
+        return self._filter('[%s]', other)
 
     def next(self, other):
         "jQuery +, XPath first following-sibling"
-        return self._filter('/following-sibling::%s[1]' % get_xpath(other))
+        return self._filter('/following-sibling::%s[1]', other)
 
     def following(self, other):
         "jQuery ~, XPath following-sibling"
-        return self._filter('/following-sibling::%s' % get_xpath(other))
+        return self._filter('/following-sibling::%s', other)
 
     def eq(self, index):
         "jQuery :eq(index), XPath [index]"
@@ -73,20 +80,23 @@ class XPathStep(object):
 
     def union(self, other):
         "jQuery ',', XPath |"
-        return self._filter('|%s)' % get_xpath(other), prefix='(')
+        return self._filter('|%s)', other,
+                            prefix='(',
+                            is_union=True)
 
     def attr(self, attrs):
         return self._filter(make_filters(attrs))
 
     def has_class(self, klass):
-        return self._filter('[has_word(@class, "%s")]' % klass)
+        return self._filter('[has_word(@class, "%s")]', klass)
 
     def text_equals(self, text):
         return self._filter('[text()="%s"]' % text)
 
 class Ekskweri(XPathStep):
-    def __init__(self, document, xpath=''):
-        super(Ekskweri, self).__init__(xpath)
+    """A DOM tree with query methods"""
+    def __init__(self, document, xpath='', *args, **kwargs):
+        super(Ekskweri, self).__init__(xpath, *args, **kwargs)
         try:
             document = file(document).read()
         except (TypeError, IOError):
@@ -102,8 +112,8 @@ class Ekskweri(XPathStep):
                 self.dom = lxml.html.fromstring(document)
         self.xpath_evaluator = XPathEvaluator(self.dom, extensions=extensions)
 
-    def _filter(self, tail, prefix=''):
-        return self.__class__(self.dom, '%s%s%s' % (prefix, self.xpath, tail))
+    def _clone(self, xpath, *args, **kwargs):
+        return self.__class__(self.dom, xpath, *args, **kwargs)
 
     def __len__(self):
         return len(self.eval())
