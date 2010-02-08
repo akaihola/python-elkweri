@@ -14,6 +14,10 @@ class EkskweriTests(TestCase):
     def setUp(self):
         self.query = Ekskweri('<html id="h"><body id="b"/></html>')
 
+    def test_descendant_xpath(self):
+        q = self.query.descendant(XPathStep('body'))
+        eq_(q.xpath, '//body')
+
     def test_descendant(self):
         q = self.query.descendant(XPathStep('body')).getattr('id')
         eq_(q.xpath, '//body/@id')
