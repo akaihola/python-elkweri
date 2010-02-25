@@ -132,6 +132,7 @@ class HtmlTests(TestCase):
         """Union can't be used except at the beginning of an expression"""
         assert_raises(SyntaxError, lambda: self.html // x // (span | a))
 
+
 class FormTests(TestCase):
     form1 = Elkweri(
         u'<form method="post" action=".">'
@@ -153,7 +154,8 @@ class FormTests(TestCase):
         eq_(len(self.form1 / input), 2)
 
     def test_form_first_input(self):
-        ok_(self.form1 / input(name='last_name', id='id_last_name', value='Ek'))
+        ok_(self.form1 /
+            input(name='last_name', id='id_last_name', value='Ek'))
 
     def test_form_nonexistent_input(self):
         ok_(not self.form1 / input(
@@ -175,6 +177,7 @@ class FormTests(TestCase):
         ok_(self.form1 / input('#id_last_name')[0])
         ok_(not self.form1 / input[0]('#id_first_name'))
         ok_(not self.form1 / input('#id_first_name')[0])
+
 
 def test_root_id():
     html1 = Elkweri(file(join(DATA_DIR, 'jquery_test.html')).read())
