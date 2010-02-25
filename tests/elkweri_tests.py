@@ -7,7 +7,8 @@ from nose.tools import eq_, ok_, assert_raises
 DATA_DIR = join(dirname(__file__), 'data')
 
 from elkweri import Elkweri
-from elkweri.tags import html, body, div, p, span, a, form, input, x
+from elkweri.tags import html, body, div, p, span, a, form, input, x, any_field
+
 
 class HtmlTests(TestCase):
     html = Elkweri(u'<html><body><div id="main">'
@@ -135,6 +136,7 @@ class FormTests(TestCase):
     form1 = Elkweri(
         u'<form method="post" action=".">'
         u'<input type="text" name="last_name" id="id_last_name" value="Ek" />'
+        u'<textarea name="cv" id="id_cv">My CV</textarea>'
         u'<input type="submit" value="Send" />'
         u'</form>') / html / body / form
 
@@ -162,6 +164,9 @@ class FormTests(TestCase):
 
     def test_form_input_tags(self):
         eq_((self.form1 / input).tag, ['input', 'input'])
+
+    def test_form_any_field(self):
+        eq_((self.form1 / any_field).tag, ['input', 'textarea', 'input'])
 
     def test_form_first_input_by_id(self):
         ok_(self.form1 / input[0]('#id_last_name'))
