@@ -1,5 +1,5 @@
 import lxml.html
-from lxml.etree import tostring, XPathEvalError, XPathEvaluator
+from lxml.etree import tostring, XPathEvalError, XPathEvaluator, ParserError
 
 def simple_attrs(attrs):
     return sorted((attname, value) for attname, value in attrs.items()
@@ -116,7 +116,12 @@ class Ekskweri(XPathStep):
                 assert callable(document.xpath)
                 self.dom = document
             except (AttributeError, AssertionError):
-                self.dom = lxml.html.fromstring(document)
+                try:
+                    self.dom = lxml.html.fragment_fromstring(document)
+                except (ParserError,     # <body />
+                        AssertionError,  # <html />
+                        TypeError):      # xml
+                    self.dom = lxml.html.document_fromstring(document)
         self.xpath_evaluator = XPathEvaluator(self.dom, extensions=extensions)
 
     def _clone(self, xpath, *args, **kwargs):
