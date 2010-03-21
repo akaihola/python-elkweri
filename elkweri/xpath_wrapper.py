@@ -50,6 +50,13 @@ class XPathStep(object):
     def _clone(self, xpath, is_union):
         return self.__class__(xpath, is_union)
 
+    @classmethod
+    def reverse(cls, meth):
+        def rmeth(self, other):
+            from elkweri import Elkweri
+            return meth(Elkweri(other), self)
+        return rmeth
+
     def descendant(self, other):
         "XPath //"
         return self._filter('//%s', other)

@@ -4,12 +4,19 @@ class Step(XPathStep):
     "The Step class represents one step in an XPath expression"
 
     __floordiv__ = XPathStep.descendant
+    __rfloordiv__ = XPathStep.reverse(__floordiv__)
     __div__ = XPathStep.child
+    __rdiv__ = XPathStep.reverse(__div__)
     __truediv__ = XPathStep.child
+    __rtruediv__ = XPathStep.reverse(__truediv__)
     __lt__ = XPathStep.has_child
+    __rlt__ = XPathStep.reverse(__lt__)
     __add__ = XPathStep.next
+    __radd__ = XPathStep.reverse(__add__)
     __xor__ = XPathStep.following
+    __rxor__ = XPathStep.reverse(__xor__)
     __or__ = XPathStep.union
+    __ror__ = XPathStep.reverse(__or__)
 
     def __getitem__(self, index):
         "XPath [integer] and /@attribute"

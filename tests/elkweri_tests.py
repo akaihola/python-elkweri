@@ -10,14 +10,14 @@ from elkweri import Elkweri
 from elkweri.tags import html, body, div, p, span, a, form, input, x, any_field
 
 
-class HtmlTests(TestCase):
-    html = Elkweri(u'<html><body><div id="main">'
-                   u'<p class="para" id="para1">This</p>'
-                   u'<p class="para" id="para2">is '
-                   u'<span class="inner"><a href="link">a</a></span></p>'
-                   u'<p class="lastpara" id="para3">test'
-                   u'<span class="inner">kin</span></p>'
-                   u'</div></body></html>')
+class RawHtmlTests(TestCase):
+    html = (u'<html><body><div id="main">'
+            u'<p class="para" id="para1">This</p>'
+            u'<p class="para" id="para2">is '
+            u'<span class="inner"><a href="link">a</a></span></p>'
+            u'<p class="lastpara" id="para3">test'
+            u'<span class="inner">kin</span></p>'
+            u'</div></body></html>')
 
     def test_many_descendants_xpath(self):
         eq_((self.html // p).xpath, '//p')
@@ -131,6 +131,10 @@ class HtmlTests(TestCase):
     def test_union_operator_fails_if_non_root(self):
         """Union can't be used except at the beginning of an expression"""
         assert_raises(SyntaxError, lambda: self.html // x // (span | a))
+
+
+class HtmlTests(RawHtmlTests):
+    html = Elkweri(RawHtmlTests.html)
 
 
 class FormTests(TestCase):
