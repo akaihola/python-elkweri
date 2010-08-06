@@ -79,6 +79,10 @@ class XPathStep(object):
 
     def eq(self, index):
         "jQuery :eq(index), XPath [index]"
+        return self._filter(')[%d]' % (index + 1), prefix='(')
+
+    def position(self, index):
+        "XPath [position()=index]"
         return self._filter('[%d]' % (index + 1))
 
     def getattr(self, attname):

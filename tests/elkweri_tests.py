@@ -175,12 +175,12 @@ class FormTests(TestCase):
         eq_((self.form1 / any_field).tag, ['input', 'textarea', 'input'])
 
     def test_form_first_input_by_id(self):
-        ok_(self.form1 / input[0]('#id_last_name'))
+        ok_((self.form1 / input)[0]('#id_last_name'))
 
     def test_form_nonexistent_input_by_id(self):
-        ok_(self.form1 / input('#id_last_name')[0])
-        ok_(not self.form1 / input[0]('#id_first_name'))
-        ok_(not self.form1 / input('#id_first_name')[0])
+        ok_((self.form1 / input('#id_last_name'))[0])
+        ok_(not (self.form1 / input)[0]('#id_first_name'))
+        ok_(not (self.form1 / input('#id_first_name'))[0])
 
 
 def test_root_id():

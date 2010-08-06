@@ -136,7 +136,7 @@ Example: testing forms
     >>> assert not form1 / input(name='last_name', id='id_last_name', value='Ahl')
     >>> assert form1 / input(type='submit', value='Send')
     >>> assert (form1 / input).tag, ['input' == 'input']
-    >>> assert form1 / input[0]('#id_last_name')
-    >>> assert form1 / input('#id_last_name')[0]
-    >>> assert not form1 / input[0]('#id_first_name')
-    >>> assert not form1 / input('#id_first_name')[0]
+    >>> assert (form1 / input)[0]('#id_last_name')
+    >>> assert (form1 / input('#id_last_name'))[0]
+    >>> assert not (form1 / input)[0]('#id_first_name')
+    >>> assert not (form1 / input('#id_first_name'))[0]

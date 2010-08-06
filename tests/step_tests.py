@@ -31,7 +31,10 @@ class StepTests(TestCase):
         eq_((p ^ p).xpath, 'p/following-sibling::p')
 
     def test_child_index(self):
-        eq_(p[0].xpath, 'p[1]')
+        eq_(p[0].xpath, '(p)[1]')
+
+    def test_child_position(self):
+        eq_(p.position(0).xpath, 'p[1]')
 
     def test_by_id(self):
         eq_(p('#id').xpath, 'p[@id="id"]')
